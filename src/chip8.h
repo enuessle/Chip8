@@ -21,6 +21,46 @@ private:
 
 public:
 
+	//Opcode Functions
+	void _1nnn();
+	void _2nnn();
+	void _3xkk();
+	void _4xkk();
+	void _5xy0();
+	void _6xkk();
+	void _7xkk();
+	void _9xy0();
+	void _Annn();
+	void _Bnnn();
+	void _Cxkk();
+	void _Dxyn();
+
+	void _8xy0();
+	void _8xy1();
+	void _8xy2();
+	void _8xy3();
+	void _8xy4();
+	void _8xy5();
+	void _8xy6();
+	void _8xy7();
+	void _8xyE();
+
+	void _00E0();
+	void _00EE();
+
+	void _ExA1();
+	void _Ex9E();
+
+	void _Fx07();
+	void _Fx0A();
+	void _Fx15();
+	void _Fx18();
+	void _Fx1E();
+	void _Fx29();
+	void _Fx33();
+	void _Fx55();
+	void _Fx65();
+
 };
 
 
