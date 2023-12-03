@@ -5,6 +5,7 @@
 
 class Chip8{
 private:
+
 	uint8_t registers[16];  //Registers
 	uint8_t memory[4096];   //Memory Bytes
 	Stack stack;			//Stack
@@ -17,9 +18,16 @@ private:
 
 	uint8_t input;			//Input Keypad
 
-	uint16_t opcode;		//Opcode
+	uint16_t opcode;		//Current Opcode
+
+	uint32_t graphics[64*32]; //Graphics Buffer
 
 public:
+
+	Chip8();
+
+	//Emulator Functions
+	void loadROM(char* filename);
 
 	//Opcode Functions
 	void _1nnn();

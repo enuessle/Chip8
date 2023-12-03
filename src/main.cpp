@@ -11,4 +11,6 @@ int main(int argc, char* args[]){
 	
 	printf("Test\n");
 
+	uint32_t graphics[64*32]; //Graphics Buffer
+	printf("%ld\n", sizeof(graphics));
 }

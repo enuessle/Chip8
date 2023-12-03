@@ -17,7 +17,7 @@ void Stack::push(uint16_t pc){
 	sp++;
 }
 
-uint16_t Stack::pull(){
+uint16_t Stack::pop(){
 	sp--;
 	return stack[sp];
 }

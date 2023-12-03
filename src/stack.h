@@ -17,7 +17,7 @@ public:
 	~Stack();
 
 	void push(uint16_t pc);
-	uint16_t pull();
+	uint16_t pop();
 };
 
 
