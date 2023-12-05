@@ -20,11 +20,12 @@ private:
 
 	uint16_t opcode;		//Current Opcode
 
-	uint32_t graphics[64*32]; //Graphics Buffer
-
 public:
 
 	Chip8();
+
+	uint32_t graphics[64*32]; //Graphics Buffer
+	uint8_t keypad[16];
 
 	//Emulator Functions
 	void loadROM(char* filename);

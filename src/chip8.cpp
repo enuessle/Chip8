@@ -8,7 +8,9 @@
 //CONSTANTS
 const uint16_t START_ADDRESS = 0x200;
 
-const uint8_t fontset[80] =
+const uint FONTSET_ADDRESS = 80;
+
+const uint8_t FONTSET[80] =
 {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 	0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -198,4 +200,118 @@ void Chip8::_9xy0(){
 	uint8_t y = (opcode & 0x00F0) >> 4;
 
 	if(registers[x] != registers[y]){pc+=2;}
+}
+
+//Set Index
+void Chip8::_Annn(){
+	uint16_t nnn = opcode & 0x0FFF;
+
+	index = nnn;
+}
+
+//Jump to reg[0] + nnn
+void Chip8::_Bnnn(){
+	uint16_t nnn = opcode & 0x0FFF;
+
+	pc = registers[0]+nnn;
+}
+
+//Set to Random byte and kk
+void Chip8::_Cxkk(){
+
+}
+
+//Draw sprite
+void Chip8::_Dxyn(){
+
+}
+
+//Skip if key with value of register[x] is pressed
+void Chip8::_Ex9E(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t key = registers[x];
+
+	if(keypad[key] == key){pc+=2;}
+}
+
+//Skip if key not pressed
+void Chip8::_ExA1(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t key = registers[x];
+
+	if(keypad[key] != key){pc+=2;}
+}
+
+//Set reg[x] to timer
+void Chip8::_Fx07(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	registers[x] = timer;
+}
+
+//Wait for keypress
+void Chip8::_Fx0A(){
+
+}
+
+//Timer to reg[x]
+void Chip8::_Fx15(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	timer = registers[x];
+}
+
+//Sound Timer to reg[x]
+void Chip8::_Fx18(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	sound_timer = registers[x];
+}
+
+//Add to Index
+void Chip8::_Fx1E(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	index += registers[x];
+}
+
+//Set I to location of sprite for digit at reg[x]
+void Chip8::_Fx29(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t digit = registers[x];
+
+	index = FONTSET_ADDRESS + (digit*5);
+}
+
+//Store Hundreds place of reg[x] at index
+//Tens at index+1
+//Ones at index+2
+void Chip8::_Fx33(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t value = registers[x];
+
+	uint16_t i = index + 2;
+	while(i>=index){
+		memory[i] = value % 10;
+		value /=10;
+		i--;
+	}
+}
+
+//Stores registers 0~x in memory starting at index
+void Chip8::_Fx55(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	for(uint8_t i = 0; i<=x; i++){
+		memory[index+i] = registers[i];
+	}
+}
+
+//Set registers 0~x from memory starting at index
+void Chip8::_Fx65(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+
+	for(uint8_t i = 0; i<=x; i++){
+		registers[i] = memory[index+i];
+	}
 }
