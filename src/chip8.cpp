@@ -10,6 +10,9 @@ const uint16_t START_ADDRESS = 0x200;
 
 const uint FONTSET_ADDRESS = 80;
 
+const uint8_t VIDEO_WIDTH = 64;
+const uint8_t VIDEO_HEIGHT = 32;
+
 const uint8_t FONTSET[80] =
 {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -218,12 +221,49 @@ void Chip8::_Bnnn(){
 
 //Set to Random byte and kk
 void Chip8::_Cxkk(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t kk = opcode & 0x00FF;
 
+	uint8_t r = rand();
+
+	registers[x] = r & kk;
 }
 
 //Draw sprite
 void Chip8::_Dxyn(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
+	uint8_t y = (opcode & 0x00F0) >> 4;
+	uint8_t n = opcode & 0x000F;
 
+	uint8_t xPos = registers[x] % VIDEO_WIDTH;
+	uint8_t yPos = registers[y] % VIDEO_HEIGHT;
+
+	registers[0xF] = 0;
+
+	for(unsigned int row = 0; row < n; row++){
+
+		if(yPos + row > VIDEO_HEIGHT){break;}
+
+		uint8_t sprite = memory[index+row];
+
+		for(unsigned int col = 0; col < 8; col++){
+
+			if(xPos + col > VIDEO_WIDTH){break;}
+
+			uint8_t new_pixel = sprite & (0x80 >> col);
+			uint32_t * old_pixel = &graphics[(yPos+row) * VIDEO_WIDTH + (xPos+col)];
+
+			if(new_pixel){
+
+				if(*old_pixel == 0xFFFFFFFF){
+					registers[0xF] = 1;
+				}
+
+				*old_pixel ^= 0xFFFFFFFF;
+				
+			}
+		}
+	}
 }
 
 //Skip if key with value of register[x] is pressed
@@ -251,7 +291,18 @@ void Chip8::_Fx07(){
 
 //Wait for keypress
 void Chip8::_Fx0A(){
+	uint8_t x = (opcode & 0x0F00) >> 8;
 
+	uint8_t key = 0;
+
+	while(key <= 15){
+		if(keypad[key]){
+			registers[x] = key;
+			return;
+		}
+	}
+
+	pc -= 2;
 }
 
 //Timer to reg[x]
