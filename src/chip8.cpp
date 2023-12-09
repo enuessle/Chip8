@@ -8,11 +8,10 @@
 //CONSTANTS
 const uint16_t START_ADDRESS = 0x200;
 
-const uint FONTSET_ADDRESS = 80;
-
 const uint8_t VIDEO_WIDTH = 64;
 const uint8_t VIDEO_HEIGHT = 32;
 
+const uint FONTSET_ADDRESS = 80;
 const uint8_t FONTSET[80] =
 {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -38,8 +37,152 @@ const uint8_t FONTSET[80] =
 Chip8::Chip8(){
 	//Initilize Variables
 	pc = START_ADDRESS;
+
+
+
 }
 
+
+//Emulator Functions
+
+void Chip8::loadROM(char* filename){
+
+}
+
+
+void Chip8::decode(uint16_t opcode){
+
+	this.opcode = opcode;
+
+	switch ( (opcode & 0xF000) >> 12 ){
+		case 0x0:
+			//Two for 0
+			if(opcode == 0x00E0){
+				_00E0();
+			}
+			if(opcode == 0x00EE){
+				_00EE();
+			}
+			break;
+		case 0x1:
+			_1nnn();
+			break;
+		case 0x2:
+			_2nnn();
+			break;
+		case 0x3:
+			_3xkk();
+			break;
+		case 0x4:
+			_4xkk();
+			break;
+		case 0x5:
+			_5xy0();
+			break;
+		case 0x6:
+			_6xkk();
+			break;
+		case 0x7:
+			_7xkk();
+			break;
+		case 0x8:
+			//Multiple for 8
+			switch (opcode & 0x000F){
+				case 0x0:
+					_8xy0();
+					break;
+				case 0x1:
+					_8xy1();
+					break;
+				case 0x2:
+					_8xy2();
+					break;
+				case 0x3:
+					_8xy3();
+					break;
+				case 0x4:
+					_8xy4();
+					break;
+				case 0x5:
+					_8xy5();
+					break;
+				case 0x6:
+					_8xy6();
+					break;
+				case 0x7:
+					_8xy7();
+					break;
+				case 0xE:
+					_8xyE();
+					break;
+			}
+			break;
+		case 0x9:
+			_9xy0();
+			break;
+		case 0xA:
+			_Annn();
+			break;
+		case 0xB:
+			_Bnnn();
+			break;
+		case 0xC:
+			_Cxkk();
+			break;
+		case 0xD:
+			_Dxyn();
+			break;
+		case :
+			//For Starting with E and F
+			switch (opcode & 0x00FF){
+				case 0xA1:
+					_ExA1();
+					break;
+				case 0x9E:
+					_Ex9E();
+					break;
+				case 0x07:
+					_Fx07();
+					break;
+				case 0x0A:
+					_Fx0A();
+					break;
+				case 0x15:
+					_Fx15();
+					break;
+				case 0x18:
+					_Fx18();
+					break;
+				case 0x1E:
+					_Fx1E();
+					break;
+				case 0x29:
+					_Fx29();
+					break;
+				case 0x33:
+					_Fx33();
+					break;
+				case 0x55:
+					_Fx55();
+					break;
+				case 0x65:
+					_Fx65();
+					break;
+			}
+			break;
+	}
+
+
+}
+
+
+
+
+
+
+//OPCODES
+
+void Chip8::_skip(){}
 
 //Clear the Graphics Buffer
 void Chip8::_00E0(){
@@ -260,7 +403,7 @@ void Chip8::_Dxyn(){
 				}
 
 				*old_pixel ^= 0xFFFFFFFF;
-				
+
 			}
 		}
 	}

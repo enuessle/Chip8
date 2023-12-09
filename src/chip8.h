@@ -29,8 +29,11 @@ public:
 
 	//Emulator Functions
 	void loadROM(char* filename);
+	void decode(uint16_t opcode);
 
 	//Opcode Functions
+	void _skip();
+
 	void _1nnn();
 	void _2nnn();
 	void _3xkk();
