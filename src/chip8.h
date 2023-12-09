@@ -28,8 +28,8 @@ public:
 	uint8_t keypad[16];
 
 	//Emulator Functions
-	void loadROM(char* filename);
-	void decode(uint16_t opcode);
+	void loadROM(const char * filename);
+	void decode(const uint16_t opcode);
 
 	//Opcode Functions
 	void _skip();

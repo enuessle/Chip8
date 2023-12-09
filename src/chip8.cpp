@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 #include "stack.h"
 #include "chip8.h"
@@ -45,14 +46,38 @@ Chip8::Chip8(){
 
 //Emulator Functions
 
-void Chip8::loadROM(char* filename){
+void Chip8::loadROM(const char* filename){
+	//Open Rom
+	FILE* ROM = fopen(filename, "rb");
 
+	if(ROM == NULL){
+		perror("Failled to open ROM\n");
+		exit(EXIT_FAILURE);
+	}
+
+	//Get size of ROM
+	fseek(ROM, 0, SEEK_END);
+    long size = ftell(ROM);
+    fseek(ROM,0,SEEK_SET);
+
+    //Create Buffer
+    char* buffer = (char*)calloc(size+1, sizeof(char));
+
+    //Copy to Buffer, then Close File
+    fread(buffer,size,sizeof(char),ROM);
+    fclose(ROM);
+
+    for(long i = 0; i < size; i++){
+    	memory[START_ADDRESS+i] = buffer[i];
+    }
+
+    free(buffer);
 }
 
 
-void Chip8::decode(uint16_t opcode){
+void Chip8::decode(const uint16_t opcode){
 
-	this.opcode = opcode;
+	this->opcode = opcode;
 
 	switch ( (opcode & 0xF000) >> 12 ){
 		case 0x0:
@@ -132,7 +157,7 @@ void Chip8::decode(uint16_t opcode){
 		case 0xD:
 			_Dxyn();
 			break;
-		case :
+		default :
 			//For Starting with E and F
 			switch (opcode & 0x00FF){
 				case 0xA1:
