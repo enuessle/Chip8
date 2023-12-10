@@ -13,7 +13,7 @@
 
 const unsigned int WIDTH = 1024;
 const unsigned int HEIGHT = 512;
-const unsigned int DELAY = 2;
+const float FRAME_TIME = 16.7; //60FPS
 
 const uint8_t KEYBINDS[16] = {
     SDLK_x,
@@ -67,6 +67,8 @@ int WinMain(){
 
 
 
+	auto lastDrawTime = std::chrono::high_resolution_clock::now();
+
 	//Emulation Main Loop
 	while(true){
 
@@ -117,13 +119,29 @@ int WinMain(){
 		if(quit){break;}
 
 
-		//Update Screen
-		SDL_UpdateTexture(texture,NULL,emulator.graphics, 64 * sizeof(uint32_t));
-		SDL_RenderClear(renderer);
-		SDL_RenderCopy(renderer, texture, nullptr,nullptr);
-		SDL_RenderPresent(renderer);
+		//Only Draw if something has changed
+		if(emulator.draw){
+			//Slowdown for draws
+			while(1){
+				auto currentTime = std::chrono::high_resolution_clock::now();
+				float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastDrawTime).count();
 
-		 std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
+				if(dt > FRAME_TIME	){
+						lastDrawTime = currentTime;
+						break;
+				}
+			}
+
+
+			//Update Screen
+			SDL_UpdateTexture(texture,NULL,emulator.graphics, 64 * sizeof(uint32_t));
+			SDL_RenderClear(renderer);
+			SDL_RenderCopy(renderer, texture, nullptr,nullptr);
+			SDL_RenderPresent(renderer);
+			emulator.draw = false;
+
+		}
+		
 
 	}
 

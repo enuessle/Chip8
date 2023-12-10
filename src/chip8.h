@@ -24,6 +24,8 @@ public:
 
 	Chip8();
 
+	bool draw = false;
+
 	uint32_t graphics[64*32]; //Graphics Buffer
 	uint8_t keypad[16];
 

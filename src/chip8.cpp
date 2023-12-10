@@ -52,6 +52,11 @@ Chip8::Chip8(){
 		graphics[i] = 0x00000000;
 	}
 
+	//Clear Keypad
+	for(unsigned int i = 0; i < 16; i++){
+		keypad[i] = 0;
+	}
+
 }
 
 
@@ -235,6 +240,7 @@ void Chip8::_skip(){}
 
 //Clear the Graphics Buffer
 void Chip8::_00E0(){
+	draw = true;
 	memset(graphics, 0, sizeof(graphics));
 }
 
@@ -423,6 +429,9 @@ void Chip8::_Cxkk(){
 
 //Draw sprite
 void Chip8::_Dxyn(){
+
+	draw = true;
+
 	uint8_t x = (opcode & 0x0F00) >> 8;
 	uint8_t y = (opcode & 0x00F0) >> 4;
 	uint8_t n = opcode & 0x000F;
