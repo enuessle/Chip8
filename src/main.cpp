@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <random>
+#include <chrono>
+#include <thread>
 
 #include "SDL2/SDL.h"
 
@@ -11,7 +13,26 @@
 
 const unsigned int WIDTH = 1024;
 const unsigned int HEIGHT = 512;
-const unsigned int DELAY = 3;
+const unsigned int DELAY = 2;
+
+const uint8_t KEYBINDS[16] = {
+    SDLK_x,
+    SDLK_1,
+    SDLK_2,
+    SDLK_3,
+    SDLK_q,
+    SDLK_w,
+    SDLK_e,
+    SDLK_a,
+    SDLK_s,
+    SDLK_d,
+    SDLK_z,
+    SDLK_c,
+    SDLK_4,
+    SDLK_r,
+    SDLK_f,
+    SDLK_v,
+};
 
 int WinMain(){
 	
@@ -45,6 +66,66 @@ int WinMain(){
 											SDL_TEXTUREACCESS_STREAMING, 64, 32);
 
 
+
+	//Emulation Main Loop
+	while(true){
+
+		emulator.cycle();
+
+		SDL_Event event;
+
+		bool quit = false;
+
+		while(SDL_PollEvent(&event)){
+
+			//Exit Out of Everything if Quit
+			if(event.type == SDL_QUIT){
+				quit = true;
+				break;
+			}
+
+			//See if Key has been pressed
+			if(event.type == SDL_KEYDOWN){
+
+				if(event.key.keysym.sym == SDLK_ESCAPE){
+					quit = true;
+					break;
+				}
+
+				//For Keypad
+				for(unsigned int i = 0; i < 16; i++){
+					if(event.key.keysym.sym == KEYBINDS[i]){
+						emulator.keypad[i] = 1;
+					}
+				}
+			}
+
+			//See if Key has been unpressed
+			if(event.type == SDL_KEYUP){
+
+				//For Keypad
+				for(unsigned int i = 0; i < 16; i++){
+					if(event.key.keysym.sym == KEYBINDS[i]){
+						emulator.keypad[i] = 0;
+					}
+				}
+			}
+
+		}
+
+		//Exit
+		if(quit){break;}
+
+
+		//Update Screen
+		SDL_UpdateTexture(texture,NULL,emulator.graphics, 64 * sizeof(uint32_t));
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, nullptr,nullptr);
+		SDL_RenderPresent(renderer);
+
+		 std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
+
+	}
 
 
 

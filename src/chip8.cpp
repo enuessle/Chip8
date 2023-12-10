@@ -47,6 +47,11 @@ Chip8::Chip8(){
 		memory[FONTSET_ADDRESS + i] = FONTSET[i];
 	}
 
+	//Clear Graphics Buffer
+	for(unsigned int i = 0; i < (64*32); i++){
+		graphics[i] = 0x00000000;
+	}
+
 }
 
 
@@ -458,7 +463,7 @@ void Chip8::_Ex9E(){
 	uint8_t x = (opcode & 0x0F00) >> 8;
 	uint8_t key = registers[x];
 
-	if(keypad[key] == key){pc+=2;}
+	if(keypad[key]){pc+=2;}
 }
 
 //Skip if key not pressed
@@ -466,7 +471,7 @@ void Chip8::_ExA1(){
 	uint8_t x = (opcode & 0x0F00) >> 8;
 	uint8_t key = registers[x];
 
-	if(keypad[key] != key){pc+=2;}
+	if(!keypad[key]){pc+=2;}
 }
 
 //Set reg[x] to timer
@@ -482,7 +487,7 @@ void Chip8::_Fx0A(){
 
 	uint8_t key = 0;
 
-	while(key <= 15){
+	while(key < 16){
 		if(keypad[key]){
 			registers[x] = key;
 			return;
