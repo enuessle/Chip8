@@ -1,12 +1,12 @@
 # Variables to control Makefile operation
  
 CC = g++
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -static-libgcc -static-libstdc++
 
 # Compile
 
 main : main.o chip8.o stack.o
-	$(CC) $(CFLAGS) -o main.out main.o chip8.o stack.o
+	$(CC) $(CFLAGS) -o main.exe main.o chip8.o stack.o -lSDL2 -lSDL2main
 
 main.o :
 	$(CC) $(CFLAGS) -c src/main.cpp
@@ -19,3 +19,6 @@ stack.o :
 
 clean :
 	rm main.o chip8.o stack.o
+
+winclean:
+	del main.o chip8.o stack.o

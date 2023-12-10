@@ -30,6 +30,7 @@ public:
 	//Emulator Functions
 	void loadROM(const char * filename);
 	void decode(const uint16_t opcode);
+	void cycle();
 
 	//Opcode Functions
 	void _skip();

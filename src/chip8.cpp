@@ -12,8 +12,10 @@ const uint16_t START_ADDRESS = 0x200;
 const uint8_t VIDEO_WIDTH = 64;
 const uint8_t VIDEO_HEIGHT = 32;
 
-const uint FONTSET_ADDRESS = 80;
-const uint8_t FONTSET[80] =
+const unsigned int FONTSET_ADDRESS = 80;
+const unsigned int FONTSET_SIZE = 80;
+
+const uint8_t FONTSET[FONTSET_SIZE] =
 {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 	0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -40,6 +42,10 @@ Chip8::Chip8(){
 	pc = START_ADDRESS;
 
 
+	//Load Font into Memory
+	for(unsigned int i = 0; i < FONTSET_SIZE; i++){
+		memory[FONTSET_ADDRESS + i] = FONTSET[i];
+	}
 
 }
 
@@ -67,6 +73,7 @@ void Chip8::loadROM(const char* filename){
     fread(buffer,size,sizeof(char),ROM);
     fclose(ROM);
 
+    //Copy Buffer to Memory
     for(long i = 0; i < size; i++){
     	memory[START_ADDRESS+i] = buffer[i];
     }
@@ -196,11 +203,23 @@ void Chip8::decode(const uint16_t opcode){
 			}
 			break;
 	}
-
-
 }
 
+void Chip8::cycle(){
+	//Fetch
+	//Get the Two Opcode bytes
+	opcode = (memory[pc] << 8) | memory[pc + 1];
 
+	//Increment PC
+	pc+=2;
+
+	//Decode / Execute
+	decode(opcode);
+
+	//Decrement Timers
+	if(timer > 0){timer--;}
+	if(sound_timer > 0){sound_timer--;}
+}
 
 
 
